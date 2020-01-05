@@ -39,7 +39,9 @@ export const Header: React.FC<Props> = () => {
                 <div>
                     <Link to="/photos"> Photos </Link>
                 </div>
-
+                <div>
+                    <Link to="/photolist"> Photo List </Link>
+                </div>
                 <div>
                     {loggedIn && (
                         <button

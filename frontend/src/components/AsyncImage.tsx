@@ -3,7 +3,6 @@ import React, { useState } from "react";
 interface Props {
     source: string;
     alt: string;
-    key: number;
 }
 
 export const AsyncImage: React.FC<Props> = ({ source, alt }) => {
@@ -17,7 +16,22 @@ export const AsyncImage: React.FC<Props> = ({ source, alt }) => {
     };
 
     if (loading) {
-        return <div> loading ... </div>;
+        return (
+            <div
+                style={{
+                    display: "inline-block",
+                    padding: "0",
+                    margin: "0",
+                    border: "1px solid black",
+                    backgroundColor: "white",
+                    height: "200px",
+                    width: "200px",
+                    textAlign: "center"
+                }}
+            >
+                loading ...
+            </div>
+        );
     } else {
         return <img src={source} alt={alt} />;
     }
