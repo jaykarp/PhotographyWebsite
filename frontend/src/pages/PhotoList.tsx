@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { animated, useSpring, to } from "react-spring";
+import { animated, useSpring, to, useSprings } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -16,16 +16,20 @@ const pages = [
 ];
 
 export const PhotoList: React.FC<RouteComponentProps> = () => {
-    const index = useRef(0);
-    const [{ pos }, set] = useSpring(() => ({
-        pos: [0, 0]
+    const [{ x }, set] = useSpring(() => ({
+        x: 0
+    }));
+    const [springs, setSprings] = useSprings(pages.length, () => ({
+        opacity: 1,
+        height: 200,
+        width: 200
     }));
 
     const bind = useDrag(
-        ({ down, movement: pos, velocity, direction: [dx] }) => {
+        ({ down, movement: [mx], velocity, direction: [dx] }) => {
             if (down) {
                 set({
-                    pos,
+                    x: mx,
                     config: {
                         velocity: 0,
                         decay: false
@@ -33,7 +37,7 @@ export const PhotoList: React.FC<RouteComponentProps> = () => {
                 });
             } else {
                 set({
-                    pos,
+                    x: mx,
                     config: {
                         velocity: dx * velocity,
                         decay: true
@@ -43,7 +47,7 @@ export const PhotoList: React.FC<RouteComponentProps> = () => {
         },
         {
             initial: () => {
-                return pos.getValue() as any;
+                return [(x as any).value, 0];
             }
         }
     );
@@ -51,25 +55,46 @@ export const PhotoList: React.FC<RouteComponentProps> = () => {
         <animated.div
             {...bind()}
             style={{
-                transform: to([pos], ([x]) => {
+                transform: to(x, x => {
                     return `translate3d(${x}px,0px,0)`;
                 }),
                 whiteSpace: "nowrap"
             }}
         >
-            {pages.map((url, i) => {
+            {springs.map(({ height, width }, i) => {
                 return (
-                    <div
-                        onMouseEnter={() => (index.current = i)}
+                    <animated.div
+                        key={i}
+                        onMouseEnter={() => {
+                            setSprings(index => {
+                                if (index === i) {
+                                    return {
+                                        height: 210,
+                                        width: 210
+                                    };
+                                } else {
+                                    return {
+                                        height: 200,
+                                        widht: 200
+                                    };
+                                }
+                            });
+                        }}
+                        onMouseLeave={() => {
+                            setSprings(() => ({
+                                height: 200,
+                                width: 200
+                            }));
+                        }}
                         style={{
                             backgroundColor: "black",
-                            height: "200px",
-                            width: "200px",
+                            height,
+                            width,
                             display: "inline-block",
                             margin: "5px",
-                            backgroundImage: `url(${url})`
+                            backgroundImage: `url(${pages[0]})`
                         }}
-                    ></div>
+                    ></animated.div>
                 );
             })}
         </animated.div>
