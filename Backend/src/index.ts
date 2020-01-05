@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import UserResolver from "./UserResolver";
+import UserResolver from "./resolvers/UserResolver";
 import { createConnection } from "typeorm";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
@@ -11,6 +11,7 @@ import { createAccessToken, createRefreshToken } from "./auth";
 import { User } from "./entity/User";
 import { sendRefreshToken } from "./sendRefreshToken";
 import cors from "cors";
+import PhotoResolver from "./resolvers/PhotoResolver";
 
 (async () => {
     const app = express();
@@ -59,7 +60,7 @@ import cors from "cors";
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [UserResolver]
+            resolvers: [UserResolver, PhotoResolver]
         }),
         context: ({ req, res }) => ({ req, res })
     });

@@ -9,12 +9,12 @@ import {
     UseMiddleware,
     Int
 } from "type-graphql";
-import { User } from "./entity/User";
+import { User } from "../entity/User";
 import * as argon2 from "argon2";
-import { Context } from "src/Context";
-import { createRefreshToken, createAccessToken } from "./auth";
+import { Context } from "../Context";
+import { createRefreshToken, createAccessToken } from "../auth";
 import { isAuth } from "./isAuthMiddleware";
-import { sendRefreshToken } from "./sendRefreshToken";
+import { sendRefreshToken } from "../sendRefreshToken";
 import { getConnection } from "typeorm";
 import { verify } from "jsonwebtoken";
 
@@ -55,6 +55,9 @@ export default class UserResolver {
                 token,
                 process.env.ACCESS_TOKEN_SECRET!
             );
+
+            console.log(payload);
+
             context.payload = payload as any;
 
             return await User.findOne(payload.userId);

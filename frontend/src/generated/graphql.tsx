@@ -23,6 +23,7 @@ export type Mutation = {
   login: LoginResponse,
   logout: Scalars['Boolean'],
   register: Scalars['Boolean'],
+  addPhoto: Scalars['Boolean'],
 };
 
 
@@ -42,11 +43,37 @@ export type MutationRegisterArgs = {
   email: Scalars['String']
 };
 
+
+export type MutationAddPhotoArgs = {
+  date: Scalars['String'],
+  description: Scalars['String'],
+  name: Scalars['String'],
+  category: Scalars['String'],
+  url: Scalars['String']
+};
+
+export type Photo = {
+   __typename?: 'Photo',
+  id: Scalars['Int'],
+  url: Scalars['String'],
+  category: Scalars['String'],
+  name: Scalars['String'],
+  description: Scalars['String'],
+  date: Scalars['String'],
+};
+
 export type Query = {
    __typename?: 'Query',
   bye: Scalars['String'],
   users: Array<User>,
   self?: Maybe<User>,
+  photos: Array<Photo>,
+  photo?: Maybe<Photo>,
+};
+
+
+export type QueryPhotoArgs = {
+  id: Scalars['Int']
 };
 
 export type User = {
@@ -87,6 +114,17 @@ export type LogoutMutationVariables = {};
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'logout'>
+);
+
+export type PhotosQueryVariables = {};
+
+
+export type PhotosQuery = (
+  { __typename?: 'Query' }
+  & { photos: Array<(
+    { __typename?: 'Photo' }
+    & Pick<Photo, 'id' | 'name' | 'date' | 'category' | 'description' | 'url'>
+  )> }
 );
 
 export type RegisterMutationVariables = {
@@ -219,6 +257,43 @@ export function useLogoutMutation(baseOptions?: ApolloReactHooks.MutationHookOpt
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = ApolloReactCommon.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const PhotosDocument = gql`
+    query Photos {
+  photos {
+    id
+    name
+    date
+    category
+    description
+    url
+  }
+}
+    `;
+
+/**
+ * __usePhotosQuery__
+ *
+ * To run a query within a React component, call `usePhotosQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePhotosQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePhotosQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePhotosQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PhotosQuery, PhotosQueryVariables>) {
+        return ApolloReactHooks.useQuery<PhotosQuery, PhotosQueryVariables>(PhotosDocument, baseOptions);
+      }
+export function usePhotosLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PhotosQuery, PhotosQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<PhotosQuery, PhotosQueryVariables>(PhotosDocument, baseOptions);
+        }
+export type PhotosQueryHookResult = ReturnType<typeof usePhotosQuery>;
+export type PhotosLazyQueryHookResult = ReturnType<typeof usePhotosLazyQuery>;
+export type PhotosQueryResult = ApolloReactCommon.QueryResult<PhotosQuery, PhotosQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($email: String!, $password: String!) {
   register(email: $email, password: $password)

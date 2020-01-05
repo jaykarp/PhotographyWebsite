@@ -37,6 +37,10 @@ export const Header: React.FC<Props> = () => {
                     <Link to="/bye"> Bye </Link>
                 </div>
                 <div>
+                    <Link to="/photos"> Photos </Link>
+                </div>
+
+                <div>
                     {loggedIn && (
                         <button
                             onClick={async () => {

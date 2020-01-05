@@ -1,0 +1,10 @@
+query Photos {
+  photos {
+    id
+    name
+    date
+    category
+    description
+    url
+  }
+}
