@@ -1,38 +1,38 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 
 interface Props {
-    source: string;
+    src: string;
     alt: string;
 }
 
-export const AsyncImage: React.FC<Props> = ({ source, alt }) => {
+const LoadingContainer = styled.div`
+    border: 1px solid black;
+    backgroundcolor: white;
+    width: 100%;
+    height: 100%;
+`;
+
+export const AsyncImage: React.FC<Props> = ({ src, alt }) => {
     const [loading, setLoading] = useState(true);
 
     const img: HTMLImageElement = new Image();
 
-    img.src = source;
+    img.src = src;
     img.onload = () => {
         setLoading(false);
     };
 
     if (loading) {
-        return (
-            <div
-                style={{
-                    display: "inline-block",
-                    padding: "0",
-                    margin: "0",
-                    border: "1px solid black",
-                    backgroundColor: "white",
-                    height: "200px",
-                    width: "200px",
-                    textAlign: "center"
-                }}
-            >
-                loading ...
-            </div>
-        );
+        return <LoadingContainer>loading ...</LoadingContainer>;
     } else {
-        return <img src={source} alt={alt} />;
+        return (
+            <img
+                style={{ width: "auto", height: "100%" }}
+                draggable={false}
+                src={src}
+                alt={alt}
+            />
+        );
     }
 };

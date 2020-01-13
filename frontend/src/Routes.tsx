@@ -8,11 +8,18 @@ import { Header } from "./Header";
 import { Photos } from "./pages/Photos";
 import { AuthRoute } from "./components/AuthRoute";
 import { PhotoList } from "./pages/PhotoList";
+import { InfiniteList } from "./pages/InfiniteList";
 
 export const Routes: React.FC = () => {
     return (
         <BrowserRouter>
-            <div>
+            <div
+                style={{
+                    display: "flex",
+                    flexFlow: "column",
+                    height: "100%"
+                }}
+            >
                 <Header />
                 <Switch>
                     <Route exact path="/register" component={Register} />
@@ -20,6 +27,7 @@ export const Routes: React.FC = () => {
                     <AuthRoute exact path="/bye" component={Bye} />
                     <Route exact path="/photos" component={Photos} />
                     <Route exact path="/photolist" component={PhotoList} />
+                    <Route exact path="/infinite" component={InfiniteList} />
                     <Route path="/" component={Home} />
                 </Switch>
             </div>

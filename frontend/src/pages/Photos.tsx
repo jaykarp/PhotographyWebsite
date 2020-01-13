@@ -1,25 +1,68 @@
 import React from "react";
-import { usePhotosQuery } from "../generated/graphql";
+import { PhotosQuery } from "../generated/graphql";
 import { AsyncImage } from "../components/AsyncImage";
+import { useSprings, animated } from "react-spring";
+import styled from "styled-components";
 
-interface Props {}
+interface Props {
+    data: PhotosQuery;
+}
 
-export const Photos: React.FC<Props> = () => {
-    const { data, loading } = usePhotosQuery({ fetchPolicy: "network-only" });
+const ImageContainer = styled(animated.div)`
+    background-color: red;
+    display: inline-block;
+    margin: 5px;
+`;
 
-    if (loading || !data) {
-        return <div> loading ... </div>;
-    }
+export const Photos: React.FC<Props> = ({ data }) => {
+    const [springs, setSprings] = useSprings(data.photos.length, index => ({
+        x: 0,
+        opacity: 1,
+        height: 200,
+        width: 200
+    }));
 
     return (
-        <div>
-            <div>
-                {data.photos.map(d => {
-                    return (
-                        <AsyncImage key={d.id} source={d.url} alt={d.name} />
-                    );
-                })}
-            </div>
-        </div>
+        <>
+            {springs.map(({ height, width, opacity }, i) => {
+                return (
+                    <ImageContainer
+                        onClick={() => {
+                            setSprings(index => {
+                                if (index === i) {
+                                    return {
+                                        height: 200,
+                                        width: 200,
+                                        opacity: 1
+                                    };
+                                } else {
+                                    return {
+                                        height: 200,
+                                        width: 200,
+                                        opacity: 0.5
+                                    };
+                                }
+                            });
+                        }}
+                        style={{ height, width, opacity }}
+                        key={i}
+                    >
+                        <AsyncImage
+                            src={data.photos[i].url}
+                            alt={data.photos[i].name}
+                        />
+                    </ImageContainer>
+                );
+            })}
+        </>
     );
 };
+
+//<div>
+
+//{data.photos.map(d => {
+//return (
+//<AsyncImage key={d.id} source={d.url} alt={d.name} />
+//);
+//})}
+//</div>

@@ -23,7 +23,7 @@ export const Header: React.FC<Props> = () => {
 
     return (
         <header>
-            <div>
+            <div style={{ display: "flex" }}>
                 <div>
                     <Link to="/"> Home </Link>
                 </div>
@@ -41,6 +41,9 @@ export const Header: React.FC<Props> = () => {
                 </div>
                 <div>
                     <Link to="/photolist"> Photo List </Link>
+                </div>
+                <div>
+                    <Link to="/infinite"> Infinite List </Link>
                 </div>
                 <div>
                     {loggedIn && (

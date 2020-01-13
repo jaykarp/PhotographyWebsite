@@ -11,6 +11,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
+    "@types/styled-components": "^4.4.1",
     "apollo-boost": "^0.4.7",
     "apollo-link-token-refresh": "^0.2.7",
     "graphql": "^14.5.8",
@@ -21,6 +22,7 @@
     "react-scripts": "3.3.0",
     "react-spring": "^9.0.0-beta.34",
     "react-use-gesture": "^7.0.0-beta.9",
+    "styled-components": "^4.4.1",
     "typescript": "~3.7.2",
     "vec-la": "^1.5.0"
   },
