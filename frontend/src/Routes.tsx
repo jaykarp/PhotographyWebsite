@@ -5,9 +5,7 @@ import { Register } from "./pages/Register";
 import { Login } from "./pages/Login";
 import { Bye } from "./pages/Bye";
 import { Header } from "./Header";
-import { Photos } from "./pages/Photos";
 import { AuthRoute } from "./components/AuthRoute";
-import { PhotoList } from "./pages/PhotoList";
 import { InfiniteList } from "./pages/InfiniteList";
 
 export const Routes: React.FC = () => {
@@ -25,8 +23,6 @@ export const Routes: React.FC = () => {
                     <Route exact path="/register" component={Register} />
                     <Route exact path="/login" component={Login} />
                     <AuthRoute exact path="/bye" component={Bye} />
-                    <Route exact path="/photos" component={Photos} />
-                    <Route exact path="/photolist" component={PhotoList} />
                     <Route exact path="/infinite" component={InfiniteList} />
                     <Route path="/" component={Home} />
                 </Switch>

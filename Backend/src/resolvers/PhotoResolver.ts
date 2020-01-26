@@ -28,7 +28,6 @@ export default class PhotoResolver {
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
     async addPhoto(
-        //@Ctx() { payload }: Context,
         @Arg("url") url: string,
         @Arg("category") category: string,
         @Arg("name") name: string,

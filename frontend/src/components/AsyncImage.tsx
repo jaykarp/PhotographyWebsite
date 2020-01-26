@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { a } from "react-spring";
 
 interface Props {
     src: string;
@@ -27,8 +28,14 @@ export const AsyncImage: React.FC<Props> = ({ src, alt }) => {
         return <LoadingContainer>loading ...</LoadingContainer>;
     } else {
         return (
-            <img
-                style={{ width: "auto", height: "100%" }}
+            <a.img
+                style={{
+                    height: "inherit",
+                    width: "inherit",
+                    margin: "inherit",
+                    transform: "inherit",
+                    boxShadow: "inherit"
+                }}
                 draggable={false}
                 src={src}
                 alt={alt}

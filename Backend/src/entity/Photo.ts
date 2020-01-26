@@ -26,5 +26,5 @@ export class Photo extends BaseEntity {
 
     @Field(() => String)
     @Column("date")
-    date: string;
+    date: Date;
 }

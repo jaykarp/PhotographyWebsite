@@ -1,56 +1,57 @@
-import React, { useRef, useCallback } from "react";
-import { useGesture, useDrag } from "react-use-gesture";
-import { useSpring, useSprings, a } from "react-spring";
+import React, { useRef, useCallback, useState } from "react";
+import { a, useSpring, useSprings } from "react-spring";
 import styled from "styled-components";
 import { AsyncImage } from "../components/AsyncImage";
+import { useDrag, useGesture } from "react-use-gesture";
 
-const ImageContainer = styled(a.div)`
-    position: relative;
-    height: 100%;
-    width: 100%;
+const ImagesContainer = styled(a.div)`
+    height: 70%;
+    margin: auto 0 auto 0;
     willchange: transform;
     flex-direction: row;
-    align-items: center;
     display: flex;
 `;
 
-const Image = styled(a.div)`
-    margin: 50px;
-    position: relative;
-    background: lightgrey;
-    willchange: transform;
-    width: 100%;
+const ImageContainer = styled(a.div)`
+    height: 45vmin;
+    margin: 0 10px 0 10px;
+    max-height: 80%;
+    display: contents;
+    box-shadow: 0 10px 25px;
 `;
 
 interface Props {
     items: {
         url: string;
-        height: number;
-        width: number;
     }[];
 }
 
 export const InfiniteSlider: React.FC<Props> = ({ items }) => {
-    const clicked = useRef(items.map(() => false));
+    const clickList = useRef(items.map(() => false));
+    const [clicked, setClick] = useState(false);
     const [{ x }, setX] = useSpring(() => {
         return {
             x: 0
         };
     });
 
-    const [springs, set] = useSprings(items.length, i => {
+    const [springs, setSprings] = useSprings(items.length, () => {
         return {
-            height: `${items[i].height}px`,
+            height: `45`,
             opacity: 1,
             x: 0,
-            y: 0,
             config: {
-                tension: 100,
+                tension: 75,
                 friction: 20
             }
         };
     });
 
+    const setDelay = (fn, delay) => {
+        setTimeout(() => setSprings(fn), delay);
+    };
+
+    // Function For Moving Image Div
     const runSpring = useCallback(
         x => {
             setX({
@@ -58,26 +59,19 @@ export const InfiniteSlider: React.FC<Props> = ({ items }) => {
                 immediate: false,
                 config: {
                     tension: (1 + items.length) * 100,
-                    friction: 30 + 1 * 40
+                    friction: 70
                 }
             });
         },
         [items.length, setX]
     );
 
+    // Function For Getting Image Displacement When Resized
     const getDisplacement = (e, oneClicked) => {
         const target = e.target as HTMLImageElement;
         const rect = target.getBoundingClientRect();
         const iw = window.innerWidth / 2;
-        console.log(window.innerWidth > window.innerHeight);
-        let widthFactor = 0;
-        // change 200 below here and in setDelay to change growth factor
-        if (oneClicked) {
-            widthFactor = (window.innerHeight - 200) / target.height;
-        } else {
-            const i = items.findIndex(x => x);
-            widthFactor = (window.innerHeight - 200) / items[i].height;
-        }
+        let widthFactor = 14 / 9;
         const width =
             (oneClicked
                 ? widthFactor * target.width
@@ -85,31 +79,26 @@ export const InfiniteSlider: React.FC<Props> = ({ items }) => {
         return iw - rect.x - width;
     };
 
-    const setDelay = (fn, delay) => {
-        setTimeout(() => set(fn), delay);
-    };
-
+    // Maintain Tap Offset as well as transformation for Images
     const tapOffset = useRef(0);
     const bindImage = useDrag(({ args: [index], event, tap }) => {
         if (tap) {
-            clicked.current = items.map((_, i) =>
-                i === index ? !clicked.current[index] : false
+            // Rerender Component so that bindContainer Rerenders
+            setClick(() => !clicked);
+            clickList.current = items.map((_, i) =>
+                i === index ? !clickList.current[index] : false
             );
 
-            const oneClicked = clicked.current.some(x => x);
+            const oneClicked = clickList.current.some(x => x);
             tapOffset.current += getDisplacement(event, oneClicked);
 
+            // Set Image Properties based on whether or not they were clicked
             setDelay(i => {
                 if (i === index) {
-                    const newHeight = `${window.innerHeight - 200}px`;
-                    const newWidth = `${window.innerWidth - 20}px`;
                     return {
                         x: tapOffset.current,
-                        y: clicked.current[i] ? 100 : 0,
                         opacity: 1,
-                        height: clicked.current[i]
-                            ? newHeight
-                            : `${items[i].height}px`
+                        height: clickList.current[i] ? "70" : `45`
                     };
                 } else {
                     return {
@@ -118,70 +107,50 @@ export const InfiniteSlider: React.FC<Props> = ({ items }) => {
                                 ? 2 * window.innerWidth
                                 : -2 * window.innerWidth
                             : tapOffset.current,
-                        y: 0,
                         opacity: oneClicked ? 0 : 1,
-                        height: `${items[i].height}`
+                        height: `45`
                     };
                 }
             }, 200);
         }
     });
 
+    // Maintain Offsets, handle movements on ImagesContainer
     const wheelOffset = useRef(0);
     const dragOffset = useRef(0);
-    const bindContainer = useGesture({
-        onDrag: ({ offset: [x] }) => {
-            dragOffset.current = -x;
-            return runSpring(wheelOffset.current + x);
+    const bindContainer = useGesture(
+        {
+            onDrag: ({ offset: [x] }) => {
+                dragOffset.current = -x;
+                return runSpring(wheelOffset.current + x);
+            },
+            onWheel: ({ offset: [, y] }) => {
+                wheelOffset.current = y;
+                return runSpring(y - dragOffset.current);
+            }
         },
-        onWheel: ({ offset: [, y] }) => {
-            wheelOffset.current = y;
-            return runSpring(y - dragOffset.current);
+        {
+            enabled: !clicked
         }
-    });
+    );
 
     return (
-        <ImageContainer {...bindContainer()} style={{ x }}>
-            {springs.map(({ height, x, y, opacity }, i) => {
+        <ImagesContainer {...bindContainer()} style={{ x }}>
+            {springs.map(({ height, x, opacity }, i) => {
                 return (
-                    <Image
-                        key={i}
+                    <ImageContainer
                         {...bindImage(i)}
-                        style={{ height, x, y, opacity }}
+                        style={{
+                            height: height.to(h => `${h}vmin`),
+                            x,
+                            opacity
+                        }}
+                        key={i}
                     >
                         <AsyncImage src={items[i].url} alt={"image"} />
-                    </Image>
+                    </ImageContainer>
                 );
             })}
-        </ImageContainer>
+        </ImagesContainer>
     );
 };
-
-//setDelay(i => {
-//if (i === index) {
-//const newWidth = `${window.innerWidth - 20}px`;
-//const newHeight = `${window.innerHeight - 250}px`;
-//console.log(newWidth);
-//return {
-//x: tapOffset.current,
-//opacity: 1,
-//width: clicked.current[i]
-//? newWidth
-//: `${items[i].width}px`,
-//height: clicked.current[i]
-//? newHeight
-//: `${items[i].height}px`
-//};
-//} else {
-//return {
-//x: oneClicked
-//? i > index
-//? window.innerWidth
-//: -window.innerWidth
-//: tapOffset.current,
-//opacity: oneClicked ? 0 : 1,
-//width: `${items[i].width}`,
-//height: `${items[i].height}`
-//};
-//}
-//}, 500);

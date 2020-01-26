@@ -37,12 +37,6 @@ export const Header: React.FC<Props> = () => {
                     <Link to="/bye"> Bye </Link>
                 </div>
                 <div>
-                    <Link to="/photos"> Photos </Link>
-                </div>
-                <div>
-                    <Link to="/photolist"> Photo List </Link>
-                </div>
-                <div>
                     <Link to="/infinite"> Infinite List </Link>
                 </div>
                 <div>
