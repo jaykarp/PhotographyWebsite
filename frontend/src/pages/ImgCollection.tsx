@@ -13,11 +13,13 @@ const ImagesContainer = styled(a.div)`
 `;
 
 const ImageContainer = styled(a.div)`
-    height: 45vmin;
     margin: 0 10px 0 10px;
     max-height: 80%;
     display: contents;
     box-shadow: 0 10px 25px;
+    &:hover {
+        box-shadow: 0 20px 35px;
+    }
 `;
 
 interface Props {
@@ -26,7 +28,7 @@ interface Props {
     }[];
 }
 
-export const InfiniteSlider: React.FC<Props> = ({ items }) => {
+export const ImgCollection: React.FC<Props> = ({ items }) => {
     const clickList = useRef(items.map(() => false));
     const [clicked, setClick] = useState(false);
     const [{ x }, setX] = useSpring(() => {
@@ -120,7 +122,7 @@ export const InfiniteSlider: React.FC<Props> = ({ items }) => {
     const dragOffset = useRef(0);
     const bindContainer = useGesture(
         {
-            onDrag: ({ offset: [x] }) => {
+            onDrag: ({ offset: [x], tap }) => {
                 dragOffset.current = -x;
                 return runSpring(wheelOffset.current + x);
             },

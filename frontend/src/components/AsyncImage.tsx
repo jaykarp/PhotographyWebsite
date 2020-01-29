@@ -8,10 +8,9 @@ interface Props {
 }
 
 const LoadingContainer = styled.div`
-    border: 1px solid black;
     backgroundcolor: white;
-    width: 100%;
-    height: 100%;
+    width: 75vmin;
+    height: 45vmin;
 `;
 
 export const AsyncImage: React.FC<Props> = ({ src, alt }) => {
@@ -24,22 +23,18 @@ export const AsyncImage: React.FC<Props> = ({ src, alt }) => {
         setLoading(false);
     };
 
-    if (loading) {
-        return <LoadingContainer>loading ...</LoadingContainer>;
-    } else {
-        return (
-            <a.img
-                style={{
-                    height: "inherit",
-                    width: "inherit",
-                    margin: "inherit",
-                    transform: "inherit",
-                    boxShadow: "inherit"
-                }}
-                draggable={false}
-                src={src}
-                alt={alt}
-            />
-        );
-    }
+    return (
+        <a.img
+            style={{
+                height: "inherit",
+                width: "inherit",
+                margin: "inherit",
+                transform: "inherit",
+                boxShadow: "inherit"
+            }}
+            draggable={false}
+            src={src}
+            alt={alt}
+        />
+    );
 };

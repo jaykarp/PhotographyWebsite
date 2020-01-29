@@ -37,7 +37,7 @@ export const Header: React.FC<Props> = () => {
                     <Link to="/bye"> Bye </Link>
                 </div>
                 <div>
-                    <Link to="/infinite"> Infinite List </Link>
+                    <Link to="/catalog"> Infinite List </Link>
                 </div>
                 <div>
                     {loggedIn && (
