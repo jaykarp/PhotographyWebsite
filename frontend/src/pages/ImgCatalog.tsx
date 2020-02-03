@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useRef, useCallback, useState } from "react";
 import styled from "styled-components";
 import { ImgCollection } from "./ImgCollection";
 import { ImgMenu } from "./ImgMenu";
 import { Switch, Route, useLocation } from "react-router-dom";
-import { a, useTransition } from "react-spring";
+import { a, useTransition, useSpring } from "react-spring";
+import { useGesture } from "react-use-gesture";
 
 interface Props {}
 
 const Main = styled.div`
+    margin-top: 3vh;
     display: flex;
     flex: 1;
-    position: absolute;
+`;
+
+const ImagesContainer = styled(a.div)`
+    height: 70%;
+    margin: auto 0 auto 0;
+    willchange: transform;
+    flex-direction: row;
+    display: flex;
 `;
 
 const items = [
@@ -37,59 +46,89 @@ const items = [
 ];
 
 export const ImgCatalog: React.FC<Props> = () => {
-    const location = useLocation();
-    const transitions = useTransition(location, location => location.pathname, {
-        from: { opacity: 0, transform: "translateX(100%)" },
-        enter: { delay: 500, opacity: 1, transform: "translateX(0%)" },
-        leave: {
-            opacity: 0
+    const [{ x }, setX] = useSpring(() => {
+        return {
+            x: 0
+        };
+    });
+
+    // Function For Moving Image Div
+    const runSpring = useCallback(
+        x => {
+            setX({
+                x: x,
+                immediate: false,
+                config: {
+                    tension: 500,
+                    friction: 70
+                }
+            });
+        },
+        [setX]
+    );
+
+    // Maintain Offsets, handle movements on ImagesContainer
+    const wheelOffset = useRef(0);
+    const dragOffset = useRef(0);
+    const bindContainer = useGesture({
+        onDrag: ({ offset: [x] }) => {
+            dragOffset.current = -x;
+            return runSpring(wheelOffset.current + x);
+        },
+        onWheel: ({ offset: [, y] }) => {
+            wheelOffset.current = y;
+            return runSpring(y - dragOffset.current);
         }
     });
+
+    const location = useLocation();
+    const transitions = useTransition(location, location => location.pathname, {
+        from: { opacity: 0 },
+        enter: () => {
+            return { delay: 300, opacity: 1 };
+        },
+        leave: {
+            opacity: 0.1
+        }
+    });
+
     return (
-        <>
-            {transitions.map(({ item: location, props, key }) => {
-                return (
-                    <a.div key={key} style={props}>
-                        <Switch location={location}>
-                            <Route
-                                exact
-                                path="/catalog"
-                                component={() => (
-                                    <Main>
-                                        <ImgMenu items={items} />
-                                    </Main>
-                                )}
-                            />
-                            <Route
-                                path="/catalog/Birds"
-                                component={() => (
-                                    <Main>
-                                        <ImgCollection items={items} />
-                                    </Main>
-                                )}
-                            />
-                            <Route
-                                path="/catalog/Dogs"
-                                component={() => (
-                                    <Main>
-                                        <ImgCollection items={items} />
-                                    </Main>
-                                )}
-                            />
-                        </Switch>
-                    </a.div>
-                );
-            })}
-        </>
+        <Main>
+            <div style={{ position: "absolute", display: "flex" }}>
+                {transitions.map(
+                    ({ item: location, props: { opacity }, key }) => {
+                        return (
+                            <ImagesContainer
+                                {...bindContainer()}
+                                style={{ x, opacity }}
+                                key={key}
+                            >
+                                <Switch location={location}>
+                                    <Route
+                                        exact
+                                        path="/catalog"
+                                        component={() => (
+                                            <ImgMenu items={items} />
+                                        )}
+                                    />
+                                    <Route
+                                        path="/catalog/Birds"
+                                        component={() => (
+                                            <ImgCollection items={items} />
+                                        )}
+                                    />
+                                    <Route
+                                        path="/catalog/Dogs"
+                                        component={() => (
+                                            <ImgCollection items={items} />
+                                        )}
+                                    />
+                                </Switch>
+                            </ImagesContainer>
+                        );
+                    }
+                )}
+            </div>
+        </Main>
     );
-    //return (
-    //<>
-    //<Main>
-    //<InfiniteSlider items={items} display={true} />
-    //</Main>
-    //<Main>
-    //<InfiniteSlider items={items} display={false} />
-    //</Main>
-    //</>
-    //);
 };

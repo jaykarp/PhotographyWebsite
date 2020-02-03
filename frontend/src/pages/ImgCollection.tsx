@@ -31,11 +31,11 @@ interface Props {
 export const ImgCollection: React.FC<Props> = ({ items }) => {
     const clickList = useRef(items.map(() => false));
     const [clicked, setClick] = useState(false);
-    const [{ x }, setX] = useSpring(() => {
-        return {
-            x: 0
-        };
-    });
+    //const [{ x }, setX] = useSpring(() => {
+    //return {
+    //x: 0
+    //};
+    //});
 
     const [springs, setSprings] = useSprings(items.length, () => {
         return {
@@ -54,19 +54,19 @@ export const ImgCollection: React.FC<Props> = ({ items }) => {
     };
 
     // Function For Moving Image Div
-    const runSpring = useCallback(
-        x => {
-            setX({
-                x: x,
-                immediate: false,
-                config: {
-                    tension: (1 + items.length) * 100,
-                    friction: 70
-                }
-            });
-        },
-        [items.length, setX]
-    );
+    //const runSpring = useCallback(
+    //x => {
+    //setX({
+    //x: x,
+    //immediate: false,
+    //config: {
+    //tension: (1 + items.length) * 100,
+    //friction: 70
+    //}
+    //});
+    //},
+    //[items.length, setX]
+    //);
 
     // Function For Getting Image Displacement When Resized
     const getDisplacement = (e, oneClicked) => {
@@ -118,26 +118,27 @@ export const ImgCollection: React.FC<Props> = ({ items }) => {
     });
 
     // Maintain Offsets, handle movements on ImagesContainer
-    const wheelOffset = useRef(0);
-    const dragOffset = useRef(0);
-    const bindContainer = useGesture(
-        {
-            onDrag: ({ offset: [x], tap }) => {
-                dragOffset.current = -x;
-                return runSpring(wheelOffset.current + x);
-            },
-            onWheel: ({ offset: [, y] }) => {
-                wheelOffset.current = y;
-                return runSpring(y - dragOffset.current);
-            }
-        },
-        {
-            enabled: !clicked
-        }
-    );
+    //const wheelOffset = useRef(0);
+    //const dragOffset = useRef(0);
+    //const bindContainer = useGesture(
+    //{
+    //onDrag: ({ offset: [x], tap }) => {
+    //dragOffset.current = -x;
+    //return runSpring(wheelOffset.current + x);
+    //},
+    //onWheel: ({ offset: [, y] }) => {
+    //wheelOffset.current = y;
+    //return runSpring(y - dragOffset.current);
+    //}
+    //},
+    //{
+    //enabled: !clicked
+    //}
+    //);
 
     return (
-        <ImagesContainer {...bindContainer()} style={{ x }}>
+        //<ImagesContainer {...bindContainer()} style={{ x }}>
+        <>
             {springs.map(({ height, x, opacity }, i) => {
                 return (
                     <ImageContainer
@@ -153,6 +154,7 @@ export const ImgCollection: React.FC<Props> = ({ items }) => {
                     </ImageContainer>
                 );
             })}
-        </ImagesContainer>
+        </>
+        //</ImagesContainer>
     );
 };
