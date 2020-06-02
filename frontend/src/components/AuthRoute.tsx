@@ -13,7 +13,6 @@ export const AuthRoute: React.FC<Props> = ({
 }) => {
     const { data } = useSelfQuery();
 
-    debugger;
     let isAuth = false;
 
     if (data && data.self) {

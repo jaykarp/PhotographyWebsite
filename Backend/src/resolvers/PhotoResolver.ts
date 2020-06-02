@@ -10,25 +10,33 @@ import {
 import { Photo } from "../entity/Photo";
 import { isAuth } from "../resolvers/isAuthMiddleware";
 //import { Context } from "src/Context";
+import { getS3Url } from "../s3";
 
 @Resolver()
 export default class PhotoResolver {
     @Query(() => [Photo])
     async photos() {
-        return await Photo.find();
+        return await Photo.find().then(p =>
+            p.map(async p => {
+                if (!p) throw "Could not get Photos";
+                p.url = await getS3Url(p.url, 60);
+                return p;
+            })
+        );
     }
 
     @Query(() => Photo, { nullable: true })
     async photo(@Arg("id", () => Int) id: number) {
-        return await Photo.findOne({
-            id
+        return await Photo.findOne({ id }).then(async p => {
+            if (!p) throw "Could Not Find Photo ID";
+            p.url = await getS3Url(p.url, 60);
+            return p;
         });
     }
 
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
     async addPhoto(
-        //@Ctx() { payload }: Context,
         @Arg("url") url: string,
         @Arg("category") category: string,
         @Arg("name") name: string,

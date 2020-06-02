@@ -1,38 +1,33 @@
 import React, { useState } from "react";
+import styled from "styled-components";
+import { a } from "react-spring";
 
 interface Props {
-    source: string;
+    src: string;
     alt: string;
+    setLoading?: any;
 }
 
-export const AsyncImage: React.FC<Props> = ({ source, alt }) => {
-    const [loading, setLoading] = useState(true);
+const LoadingContainer = styled.div`
+    backgroundcolor: white;
+    width: 75vmin;
+    height: 45vmin;
+`;
 
+export const AsyncImage: React.FC<Props> = ({ src, alt, setLoading }) => {
     const img: HTMLImageElement = new Image();
 
-    img.src = source;
+    img.src = src;
     img.onload = () => {
         setLoading(false);
     };
 
-    if (loading) {
-        return (
-            <div
-                style={{
-                    display: "inline-block",
-                    padding: "0",
-                    margin: "0",
-                    border: "1px solid black",
-                    backgroundColor: "white",
-                    height: "200px",
-                    width: "200px",
-                    textAlign: "center"
-                }}
-            >
-                loading ...
-            </div>
-        );
-    } else {
-        return <img src={source} alt={alt} />;
-    }
+    return (
+        <img
+            style={{ width: "75vmin", padding: "10px" }}
+            draggable={false}
+            alt={alt}
+            src={src}
+        />
+    );
 };

@@ -1,31 +1,26 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { animated, useSpring, to } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import { RouteComponentProps } from "react-router-dom";
+import { Photos } from "./Photos";
+import styled from "styled-components";
+import { usePhotosQuery } from "../generated/graphql";
 
-const pages = [
-    "https://picsum.photos/200",
-    "https://picsum.photos/200",
-    "https://picsum.photos/400",
-    "https://picsum.photos/200",
-    "https://picsum.photos/300",
-    "https://picsum.photos/300",
-    "https://picsum.photos/400",
-    "https://picsum.photos/200",
-    "https://picsum.photos/300"
-];
+const PhotoContainer = styled(animated.div)`
+    white-space: nowrap;
+`;
 
 export const PhotoList: React.FC<RouteComponentProps> = () => {
-    const index = useRef(0);
-    const [{ pos }, set] = useSpring(() => ({
-        pos: [0, 0]
+    const { data, loading } = usePhotosQuery({ fetchPolicy: "network-only" });
+    const [{ x }, set] = useSpring(() => ({
+        x: 0
     }));
 
     const bind = useDrag(
-        ({ down, movement: pos, velocity, direction: [dx] }) => {
+        ({ down, movement: [mx], velocity, direction: [dx] }) => {
             if (down) {
                 set({
-                    pos,
+                    x: mx,
                     config: {
                         velocity: 0,
                         decay: false
@@ -33,7 +28,7 @@ export const PhotoList: React.FC<RouteComponentProps> = () => {
                 });
             } else {
                 set({
-                    pos,
+                    x: mx,
                     config: {
                         velocity: dx * velocity,
                         decay: true
@@ -43,35 +38,27 @@ export const PhotoList: React.FC<RouteComponentProps> = () => {
         },
         {
             initial: () => {
-                return pos.getValue() as any;
+                return [(x as any).value, 0];
             }
         }
     );
+
+    if (loading || !data) {
+        return <div> loading ... </div>;
+    }
+
     return (
-        <animated.div
-            {...bind()}
-            style={{
-                transform: to([pos], ([x]) => {
-                    return `translate3d(${x}px,0px,0)`;
-                }),
-                whiteSpace: "nowrap"
-            }}
-        >
-            {pages.map((url, i) => {
-                return (
-                    <div
-                        onMouseEnter={() => (index.current = i)}
-                        style={{
-                            backgroundColor: "black",
-                            height: "200px",
-                            width: "200px",
-                            display: "inline-block",
-                            margin: "5px",
-                            backgroundImage: `url(${url})`
-                        }}
-                    ></div>
-                );
-            })}
-        </animated.div>
+        <div style={{ flex: "1 1 auto" }}>
+            <PhotoContainer
+                {...bind()}
+                style={{
+                    transform: to(x, x => {
+                        return `translate3d(${x}px,0px,0)`;
+                    })
+                }}
+            >
+                {!loading && <Photos data={data} />}
+            </PhotoContainer>
+        </div>
     );
 };

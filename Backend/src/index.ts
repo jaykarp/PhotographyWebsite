@@ -12,9 +12,11 @@ import { User } from "./entity/User";
 import { sendRefreshToken } from "./sendRefreshToken";
 import cors from "cors";
 import PhotoResolver from "./resolvers/PhotoResolver";
+//import AWS from "aws-sdk";
 
 (async () => {
     const app = express();
+
     app.use(
         cors({
             origin: "http://localhost:3000",
@@ -24,7 +26,7 @@ import PhotoResolver from "./resolvers/PhotoResolver";
 
     app.use(cookieParser());
 
-    app.get("/", (_, res) => res.send("hello"));
+    //app.get("/", (_, res) => res.send("hello"));
 
     app.post("/refresh_token", async (req, res) => {
         const token = req.cookies.jid;
@@ -56,7 +58,35 @@ import PhotoResolver from "./resolvers/PhotoResolver";
         return res.send({ ok: true, accessToken: createAccessToken(user) });
     });
 
-    await createConnection();
+    //app.get("/image", async (_, res) => {
+    //s3.getObject(
+    //{
+    //Bucket: "lkphotography",
+    //Key: "263-400x600.jpg"
+    //},
+    //(err, data) => {
+    //if (err) {
+    //console.log(err);
+    //} else {
+    //res.writeHead(200, { "Content-Type": "image/jpeg" });
+    //res.write(data.Body, "binary");
+    //res.end(null, "binary");
+    //}
+    //}
+    //);
+    //});
+
+    //async function getImage() {
+    //}
+
+    //await getImage();
+
+    await createConnection()
+        .then(async _ => {
+            //console.log(connection);
+            console.log("Connected to DB");
+        })
+        .catch(error => console.log("TypeORM connection error: ", error));
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
