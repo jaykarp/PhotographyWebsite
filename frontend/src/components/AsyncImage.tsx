@@ -5,6 +5,7 @@ import { a } from "react-spring";
 interface Props {
     src: string;
     alt: string;
+    setLoading?: any;
 }
 
 const LoadingContainer = styled.div`
@@ -13,9 +14,7 @@ const LoadingContainer = styled.div`
     height: 45vmin;
 `;
 
-export const AsyncImage: React.FC<Props> = ({ src, alt }) => {
-    const [loading, setLoading] = useState(true);
-
+export const AsyncImage: React.FC<Props> = ({ src, alt, setLoading }) => {
     const img: HTMLImageElement = new Image();
 
     img.src = src;
@@ -24,17 +23,11 @@ export const AsyncImage: React.FC<Props> = ({ src, alt }) => {
     };
 
     return (
-        <a.img
-            style={{
-                height: "inherit",
-                width: "inherit",
-                margin: "inherit",
-                transform: "inherit",
-                boxShadow: "inherit"
-            }}
+        <img
+            style={{ width: "75vmin", padding: "10px" }}
             draggable={false}
-            src={src}
             alt={alt}
+            src={src}
         />
     );
 };

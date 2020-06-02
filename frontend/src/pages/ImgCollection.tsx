@@ -1,16 +1,8 @@
-import React, { useRef, useCallback, useState } from "react";
-import { a, useSpring, useSprings } from "react-spring";
+import React, { useRef, useState } from "react";
+import { a, useSprings } from "react-spring";
 import styled from "styled-components";
 import { AsyncImage } from "../components/AsyncImage";
-import { useDrag, useGesture } from "react-use-gesture";
-
-const ImagesContainer = styled(a.div)`
-    height: 70%;
-    margin: auto 0 auto 0;
-    willchange: transform;
-    flex-direction: row;
-    display: flex;
-`;
+import { useDrag } from "react-use-gesture";
 
 const ImageContainer = styled(a.div)`
     margin: 0 10px 0 10px;
@@ -31,11 +23,6 @@ interface Props {
 export const ImgCollection: React.FC<Props> = ({ items }) => {
     const clickList = useRef(items.map(() => false));
     const [clicked, setClick] = useState(false);
-    //const [{ x }, setX] = useSpring(() => {
-    //return {
-    //x: 0
-    //};
-    //});
 
     const [springs, setSprings] = useSprings(items.length, () => {
         return {
@@ -52,21 +39,6 @@ export const ImgCollection: React.FC<Props> = ({ items }) => {
     const setDelay = (fn, delay) => {
         setTimeout(() => setSprings(fn), delay);
     };
-
-    // Function For Moving Image Div
-    //const runSpring = useCallback(
-    //x => {
-    //setX({
-    //x: x,
-    //immediate: false,
-    //config: {
-    //tension: (1 + items.length) * 100,
-    //friction: 70
-    //}
-    //});
-    //},
-    //[items.length, setX]
-    //);
 
     // Function For Getting Image Displacement When Resized
     const getDisplacement = (e, oneClicked) => {
@@ -117,27 +89,7 @@ export const ImgCollection: React.FC<Props> = ({ items }) => {
         }
     });
 
-    // Maintain Offsets, handle movements on ImagesContainer
-    //const wheelOffset = useRef(0);
-    //const dragOffset = useRef(0);
-    //const bindContainer = useGesture(
-    //{
-    //onDrag: ({ offset: [x], tap }) => {
-    //dragOffset.current = -x;
-    //return runSpring(wheelOffset.current + x);
-    //},
-    //onWheel: ({ offset: [, y] }) => {
-    //wheelOffset.current = y;
-    //return runSpring(y - dragOffset.current);
-    //}
-    //},
-    //{
-    //enabled: !clicked
-    //}
-    //);
-
     return (
-        //<ImagesContainer {...bindContainer()} style={{ x }}>
         <>
             {springs.map(({ height, x, opacity }, i) => {
                 return (
@@ -155,6 +107,5 @@ export const ImgCollection: React.FC<Props> = ({ items }) => {
                 );
             })}
         </>
-        //</ImagesContainer>
     );
 };
