@@ -1,9 +1,11 @@
 import React, { useRef, createRef, forwardRef, useState } from "react";
 import styled from "styled-components";
-import { usePhotosQuery } from "../generated/graphql";
+//import { usePhotosQuery } from "../generated/graphql";
 //import { DesktopPhoto } from "../components/Photo";
 
-interface Props {}
+interface Props {
+    Query: any;
+}
 
 const calcOffset = (ref, imageRef) => {
     const left = ref.current.offsetLeft;
@@ -147,13 +149,14 @@ const DesktopPhotoMini: React.FC<PhotoProps> = forwardRef((props, ref: any) => (
     </MiniRefContainer>
 ));
 
-export const DesktopCatalog: React.FC<Props> = () => {
-    const { data, loading } = usePhotosQuery({ fetchPolicy: "network-only" });
+export const DesktopCatalog: React.FC<Props> = ({ Query }) => {
+    const { data, loading } = Query({ fetchPolicy: "network-only" });
     const [refs, setRefs] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [Modal, setModal] = useState(null);
     const ImageRowRef = createRef();
-    const photos = data ? data.photos : [];
+
+    const photos = data ? data[Object.keys(data)[0]] : { length: 0 };
 
     console.log(photos);
 

@@ -34,6 +34,39 @@ export default class PhotoResolver {
         });
     }
 
+    @Query(() => [Photo])
+    async birdPhotos() {
+        let photos = await Photo.find();
+        photos = photos.filter(p => p.category === "Birds");
+        return photos.map(async p => {
+            if (!p) throw "Could Not Find Photo ID";
+            p.url = await getS3Url(p.url, 60);
+            return p;
+        });
+    }
+
+    @Query(() => [Photo])
+    async wildlifePhotos() {
+        let photos = await Photo.find();
+        photos = photos.filter(p => p.category === "Wildlife");
+        return photos.map(async p => {
+            if (!p) throw "Could Not Find Photo ID";
+            p.url = await getS3Url(p.url, 60);
+            return p;
+        });
+    }
+
+    @Query(() => [Photo])
+    async naturePhotos() {
+        let photos = await Photo.find();
+        photos = photos.filter(p => p.category === "nature");
+        return photos.map(async p => {
+            if (!p) throw "Could Not Find Photo ID";
+            p.url = await getS3Url(p.url, 60);
+            return p;
+        });
+    }
+
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
     async addPhoto(

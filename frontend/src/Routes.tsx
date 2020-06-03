@@ -11,6 +11,11 @@ import { DesktopContact } from "./pages/Contact";
 import { AuthRoute } from "./components/AuthRoute";
 import { BrowserView, MobileView } from "react-device-detect";
 import styled from "styled-components";
+import {
+    useBirdPhotosQuery,
+    useWildlifePhotosQuery,
+    useNaturePhotosQuery
+} from "./generated/graphql";
 
 const StyledBrowserRouter = styled(BrowserRouter)`
     display: flex;
@@ -25,16 +30,28 @@ export const Routes: React.FC = () => {
                 <StyledBrowserRouter>
                     <DesktopHeader />
                     <Switch>
-                        <Route exact path="/Birds" component={DesktopCatalog} />
+                        <Route
+                            exact
+                            path="/Birds"
+                            render={() => (
+                                <DesktopCatalog Query={useBirdPhotosQuery} />
+                            )}
+                        />
                         <Route
                             exact
                             path="/Wildlife"
-                            component={DesktopCatalog}
+                            render={() => (
+                                <DesktopCatalog
+                                    Query={useWildlifePhotosQuery}
+                                />
+                            )}
                         />
                         <Route
                             exact
                             path="/Nature"
-                            component={DesktopCatalog}
+                            render={() => (
+                                <DesktopCatalog Query={useNaturePhotosQuery} />
+                            )}
                         />
                         <Route path="/Contact" component={DesktopContact} />
                         <Route path="/" component={DesktopHome} />

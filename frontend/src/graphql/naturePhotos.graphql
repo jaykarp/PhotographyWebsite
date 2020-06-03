@@ -1,0 +1,10 @@
+query naturePhotos {
+  naturePhotos {
+    id
+    name
+    date
+    category
+    description
+    url
+  }
+}

@@ -1,0 +1,10 @@
+query birdPhotos {
+  birdPhotos {
+    id
+    name
+    date
+    category
+    description
+    url
+  }
+}

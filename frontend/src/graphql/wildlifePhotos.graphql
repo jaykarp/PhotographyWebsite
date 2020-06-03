@@ -1,0 +1,10 @@
+query wildlifePhotos {
+  wildlifePhotos {
+    id
+    name
+    date
+    category
+    description
+    url
+  }
+}

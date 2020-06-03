@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { a } from "react-spring";
+//import { a } from "react-spring";
 
 interface Props {
     src: string;
