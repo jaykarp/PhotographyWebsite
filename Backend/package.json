@@ -16,7 +16,7 @@
    "dependencies": {
       "apollo-server-express": "^2.9.15",
       "argon2": "^0.25.1",
-      "aws-sdk": "^2.684.0",
+      "aws-sdk": "^2.814.0",
       "cookie-parser": "^1.4.4",
       "dotenv": "^8.2.0",
       "express": "^4.17.1",
